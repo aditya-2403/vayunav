@@ -19,17 +19,12 @@ export const apiService = {
 
     getWeather: async (airportCode) => {
         try {
-            // Fetch raw METAR string
-            const metarRes = await fetch(`https://aviationweather.gov/api/data/metar?ids=${airportCode}`);
-            const metarText = await metarRes.text();
-            
-            // Failsafe if external API is down or format changes
-            return {
-                metar: metarText || "METAR NOT AVAILABLE",
-            };
+            const res = await fetch(`${API_BASE_URL}/metar/${airportCode}`);
+            const text = await res.text();
+            return { metar: text || 'METAR NOT AVAILABLE' };
         } catch (error) {
-            console.error("Failed to fetch weather", error);
-            return { metar: "WEATHER DATA OFFLINE" };
+            console.error('Failed to fetch weather', error);
+            return { metar: 'WEATHER DATA OFFLINE' };
         }
     }
 };
