@@ -6,7 +6,11 @@ const INDEX_URL = `${EAIP_BASE_URL}index-en-GB.html`;
 async function getBrowser() {
     return await puppeteer.launch({
         headless: "new",
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
+        args: [
+            '--no-sandbox', 
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage'
+        ]
     });
 }
 
