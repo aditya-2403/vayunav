@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+
+# Production / Build
+dist/
+build/
+.next/
+out/
+
+# Environment Variables
+# Essential for security - protects your Firebase keys
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE Config
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project specific
+backend/node_modules/
+frontend/node_modules/
+backend/dist/
+frontend/dist/
