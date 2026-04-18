@@ -36,7 +36,10 @@ export default function SidebarComponent({
     .filter(a => isFavorite(a.code))
     .map(a => ({ value: a.code, label: `${a.code} - ${a.name}` }));
 
-  const allAirports = airports.map(a => ({ value: a.code, label: `${a.code} - ${a.name}` }));
+  // Exclude favorites from the main list to avoid Mantine's duplicate value error
+  const allAirports = airports
+    .filter(a => !isFavorite(a.code))
+    .map(a => ({ value: a.code, label: `${a.code} - ${a.name}` }));
 
   const airportOptions = favoriteAirports.length > 0
     ? [
