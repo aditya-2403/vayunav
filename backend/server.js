@@ -9,6 +9,9 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+// Health check / Keep-alive endpoint
+app.get('/ping', (req, res) => res.status(200).send('pong'));
+
 // Routes
 app.use('/api', chartRoutes);
 
