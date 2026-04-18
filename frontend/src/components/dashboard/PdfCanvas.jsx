@@ -4,12 +4,9 @@ import { apiService } from '../../services/api';
 export default function PdfCanvas({ activeChartUrl }) {
   const proxyUrl = apiService.getProxyUrl(activeChartUrl);
   
-  // Mobile browsers (Android/iOS) natively block inline PDFs in iframes, showing a blank screen or a download button.
-  // We use the Google Docs Viewer wrapper as a fallback specifically for mobile devices to force inline rendering.
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  const finalSrc = isMobile 
-    ? `https://docs.google.com/gview?url=${encodeURIComponent(proxyUrl)}&embedded=true` 
-    : proxyUrl;
+  // We use our locally hosted Mozilla PDF.js viewer which gives full controls (zoom, print, download)
+  // and has a built-in loader, ensuring a robust inline viewing experience on both desktop and mobile platforms.
+  const finalSrc = `/pdfjs/web/viewer.html?file=${encodeURIComponent(proxyUrl)}`;
 
   return (
     <motion.div
