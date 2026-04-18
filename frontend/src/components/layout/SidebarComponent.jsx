@@ -1,10 +1,13 @@
 import { 
   Paper, Select, Text, Center, Stack, Loader, 
-  Accordion, NavLink, Box, Group, Title 
+  Accordion, NavLink, Box, Group, Title, ActionIcon, ScrollArea
 } from '@mantine/core';
-import { IconFileText, IconInfoCircle } from '@tabler/icons-react';
+import { IconFileText, IconInfoCircle, IconStar, IconStarFilled, IconCloudStorm } from '@tabler/icons-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UI_MESSAGES } from '../../constants/messages';
+import { useFavorites } from '../../hooks/useFavorites';
+import { apiService } from '../../services/api';
+import { useState, useEffect } from 'react';
 
 export default function SidebarComponent({
   airports, airportsLoading, airportsError, selectedAirport, 
@@ -12,16 +15,53 @@ export default function SidebarComponent({
   activeChart, setActiveChart, closeSidebar
 }) {
 
-  const airportOptions = airports.map(airport => ({
-    value: airport.code,
-    label: `${airport.code} - ${airport.name}`
-  }));
+  const { favorites, toggleFavorite, isFavorite } = useFavorites();
+  const [metar, setMetar] = useState(null);
+  const [metarLoading, setMetarLoading] = useState(false);
+
+  useEffect(() => {
+    if (selectedAirport) {
+      setMetarLoading(true);
+      apiService.getWeather(selectedAirport).then((data) => {
+        setMetar(data.metar);
+        setMetarLoading(false);
+      });
+    } else {
+      setMetar(null);
+    }
+  }, [selectedAirport]);
+
+  // Mantine v7 Select requires grouped data in { group, items[] } format
+  const favoriteAirports = airports
+    .filter(a => isFavorite(a.code))
+    .map(a => ({ value: a.code, label: `${a.code} - ${a.name}` }));
+
+  const allAirports = airports.map(a => ({ value: a.code, label: `${a.code} - ${a.name}` }));
+
+  const airportOptions = favoriteAirports.length > 0
+    ? [
+        { group: '★ Quick Access Favorites', items: favoriteAirports },
+        { group: 'All Airports', items: allAirports },
+      ]
+    : allAirports;
 
   return (
     <>
       <Paper p="sm" radius="md" mb="xl" style={{ backgroundColor: 'rgba(0,0,0,0.3)' }}>
+        <Group justify="space-between" mb={5} wrap="nowrap">
+          <Text c="cyan" fw={600}>{UI_MESSAGES.LABEL_AERODROME}</Text>
+          {selectedAirport && (
+            <ActionIcon 
+              variant="subtle" 
+              color={isFavorite(selectedAirport) ? "yellow" : "gray"}
+              onClick={() => toggleFavorite(selectedAirport)}
+              size="sm"
+            >
+              {isFavorite(selectedAirport) ? <IconStarFilled size={18} /> : <IconStar size={18} />}
+            </ActionIcon>
+          )}
+        </Group>
         <Select
-          label={<Text c="cyan" fw={600} mb={5}>{UI_MESSAGES.LABEL_AERODROME}</Text>}
           placeholder={airportsLoading ? UI_MESSAGES.LOADING_AIRPORTS : UI_MESSAGES.AWAITING_INPUT}
           data={airportOptions}
           value={selectedAirport}
@@ -64,6 +104,30 @@ export default function SidebarComponent({
         />
         {airportsError && <Text c="red" size="sm" mt="sm">{airportsError}</Text>}
       </Paper>
+
+      <AnimatePresence mode="wait">
+        {selectedAirport && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            style={{ overflow: 'hidden' }}
+          >
+            <Paper p="sm" radius="md" mb="xl" style={{ backgroundColor: 'rgba(15, 15, 30, 0.4)', border: '1px solid rgba(157, 78, 221, 0.2)' }}>
+              <Group gap="xs" mb="xs">
+                <IconCloudStorm size={18} color="#9d4edd" />
+                <Text size="sm" c="gray.4" fw={600}>LIVE STATION METAR</Text>
+                {metarLoading && <Loader size="xs" color="cyan" />}
+              </Group>
+              <ScrollArea h={60} type="auto">
+                <Text size="xs" c="cyan" style={{ fontFamily: 'monospace', lineHeight: 1.4 }}>
+                  {metarLoading ? "FETCHING DATA..." : metar}
+                </Text>
+              </ScrollArea>
+            </Paper>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence mode="wait">
         {selectedAirport && (

@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Group, Title, Badge, Text, ActionIcon, Burger } from '@mantine/core';
-import { IconPlane, IconClock, IconRadar } from '@tabler/icons-react';
+import { IconPlane, IconClock, IconRadar, IconMoonStars } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
+import { useNightMode } from '../../hooks/useNightMode';
 
 export default function HeaderComponent({ opened, toggle }) {
+  const { isNightMode, toggleNightMode } = useNightMode();
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -32,8 +34,17 @@ export default function HeaderComponent({ opened, toggle }) {
             {time.toISOString().substring(11, 19)} UTC
           </Text>
         </Group>
-        <ActionIcon variant="light" color="violet" size="lg" radius="xl" className="pulsing-border">
-          <IconRadar size={20} />
+
+        <ActionIcon 
+          variant="light" 
+          color={isNightMode ? "red" : "indigo"} 
+          size="lg" 
+          radius="xl" 
+          onClick={toggleNightMode}
+          title="Toggle Night Vision Mode"
+          className="pulsing-border"
+        >
+          <IconMoonStars size={20} />
         </ActionIcon>
       </Group>
     </Group>
