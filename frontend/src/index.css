@@ -63,3 +63,15 @@ body {
   50% { transform: translateY(-10px) scale(1.05); filter: drop-shadow(0 0 15px var(--neon-purple)); }
   100% { transform: translateY(0px) scale(1); filter: drop-shadow(0 0 5px var(--neon-blue)); }
 }
+
+/* Night Vision UI Overlay */
+body.night-vision {
+  /* This filter overlays a deep, lower brightness red tint over the entire app */
+  filter: sepia(100%) hue-rotate(300deg) saturate(200%) brightness(0.7) contrast(1.1);
+  transition: filter 0.5s ease-in-out;
+}
+
+body.night-vision iframe {
+  /* Render the bright white PDF as black and red for night mode! */
+  filter: invert(100%) sepia(100%) hue-rotate(300deg) saturate(300%) contrast(1.2);
+}
