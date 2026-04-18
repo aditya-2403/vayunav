@@ -72,4 +72,19 @@ router.get('/proxy-pdf', async (req, res) => {
     }
 });
 
+// Endpoint to proxy METAR fetching from NOAA (CORS bypass)
+router.get('/metar/:icao', async (req, res) => {
+    const { icao } = req.params;
+    if (!icao) return res.status(400).json({ error: 'Missing ICAO code' });
+    try {
+        const response = await fetch(`https://aviationweather.gov/api/data/metar?ids=${icao.toUpperCase()}`);
+        const text = await response.text();
+        res.setHeader('Content-Type', 'text/plain');
+        res.send(text || 'METAR NOT AVAILABLE');
+    } catch (error) {
+        console.error(`METAR Proxy Error:`, error);
+        res.status(500).send('WEATHER DATA OFFLINE');
+    }
+});
+
 module.exports = router;
