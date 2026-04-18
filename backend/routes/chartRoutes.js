@@ -55,6 +55,15 @@ router.get('/proxy-pdf', async (req, res) => {
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', 'inline');
         
+        // Forward essential headers for PDF.js to support progressive loading
+        if (response.headers.has('content-length')) {
+            res.setHeader('Content-Length', response.headers.get('content-length'));
+        }
+        if (response.headers.has('accept-ranges')) {
+            res.setHeader('Accept-Ranges', response.headers.get('accept-ranges'));
+        }
+        res.setHeader('Access-Control-Expose-Headers', 'Content-Length, Accept-Ranges');
+        
         const { Readable } = require('stream');
         Readable.fromWeb(response.body).pipe(res);
     } catch (error) {
