@@ -3,19 +3,38 @@ const API_KEY = import.meta.env.VITE_API_KEY;
 
 /**
  * Authenticated fetch wrapper.
- * Automatically attaches the X-API-Key header to every request.
+ * Automatically attaches the X-API-Key and Authorization (JWT) headers to every request.
  */
 const apiFetch = (url, options = {}) => {
+    const token = sessionStorage.getItem('vayunav_token');
+    
     return fetch(url, {
         ...options,
         headers: {
-            ...(options.headers || {}),
             'X-API-Key': API_KEY,
+            'Authorization': token ? `Bearer ${token}` : '',
+            ...(options.headers || {}),
         },
     });
 };
 
 export const apiService = {
+    verifyPin: async (pin) => {
+        const res = await fetch(`${API_BASE_URL}/verify-pin`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-API-Key': API_KEY,
+            },
+            body: JSON.stringify({ pin }),
+        });
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error || 'Verification failed');
+        }
+        return res.json(); // { success, token }
+    },
+
     getAirports: async () => {
         const res = await apiFetch(`${API_BASE_URL}/airports`);
         if (!res.ok) throw new Error("Failed");
@@ -29,9 +48,8 @@ export const apiService = {
     },
 
     getProxyUrl: (pdfUrl) => {
-        // The proxy-pdf URL is used directly in an <iframe> src, so we embed
-        // the key as a query param as headers cannot be set on iframe loads.
-        return `${API_BASE_URL}/proxy-pdf?url=${encodeURIComponent(pdfUrl)}&apiKey=${API_KEY}`;
+        const token = sessionStorage.getItem('vayunav_token');
+        return `${API_BASE_URL}/proxy-pdf?url=${encodeURIComponent(pdfUrl)}&apiKey=${API_KEY}&token=${token}`;
     },
 
     getWeather: async (airportCode) => {
