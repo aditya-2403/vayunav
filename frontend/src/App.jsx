@@ -1,5 +1,7 @@
 import { MantineProvider, createTheme } from '@mantine/core';
 import Dashboard from './components/Dashboard';
+import PinLockScreen from './components/PinLockScreen';
+import { usePinLock } from './hooks/usePinLock';
 
 const theme = createTheme({
   primaryColor: 'cyan',
@@ -22,9 +24,11 @@ const theme = createTheme({
 });
 
 function App() {
+  const { isUnlocked, tryUnlock, error } = usePinLock();
+
   return (
     <MantineProvider theme={theme} defaultColorScheme="dark">
-      <Dashboard />
+      {isUnlocked ? <Dashboard /> : <PinLockScreen tryUnlock={tryUnlock} error={error} />}
     </MantineProvider>
   );
 }
