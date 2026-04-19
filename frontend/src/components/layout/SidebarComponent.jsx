@@ -208,6 +208,15 @@ export default function SidebarComponent({
             {UI_MESSAGES.DISCLAIMER}
           </Text>
         </Group>
+        <Text
+          size="9px"
+          c="dimmed"
+          ta="center"
+          mt="md"
+          style={{ fontFamily: 'monospace', opacity: 0.35, letterSpacing: '0.5px' }}
+        >
+          made with ♥ by Xiondrey
+        </Text>
       </Box>
     </>
   );
