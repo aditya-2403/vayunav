@@ -8,6 +8,7 @@ export const UI_MESSAGES = {
     OPEN_CONSOLE: "OPEN CONSOLE",
     LABEL_AERODROME: "TARGET AERODROME",
     LABEL_DATALINKS: "AVAILABLE DATALINKS",
+    APP_VERSION: "v0.01",
     DISCLAIMER: "Charts are organically sourced from the Airports Authority of India (AAI) eAIP. VayuNav is an independent interface and holds no ownership over the provided aeronautical data."
 };
 

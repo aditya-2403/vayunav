@@ -3,6 +3,7 @@ import { Group, Title, Badge, Text, ActionIcon, Burger } from '@mantine/core';
 import { IconPlane, IconClock, IconRadar, IconMoonStars } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import { useNightMode } from '../../hooks/useNightMode';
+import { UI_MESSAGES } from '../../constants/messages';
 
 export default function HeaderComponent({ opened, toggle }) {
   const { isNightMode, toggleNightMode } = useNightMode();
@@ -20,9 +21,14 @@ export default function HeaderComponent({ opened, toggle }) {
         <motion.div className="floating-icon">
           <IconPlane size={32} color="#00f5ff" />
         </motion.div>
-        <Title order={2} className="neon-text" style={{ fontFamily: 'monospace', letterSpacing: '2px' }}>
-          VAYUNAV
-        </Title>
+        <motion.div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+          <Title order={2} className="neon-text" style={{ fontFamily: 'monospace', letterSpacing: '2px', lineHeight: 1 }}>
+            VAYUNAV
+          </Title>
+          <Text size="9px" c="dimmed" style={{ fontFamily: 'monospace', letterSpacing: '1px', opacity: 0.45, lineHeight: 1, marginTop: 2 }}>
+            {UI_MESSAGES.APP_VERSION}
+          </Text>
+        </motion.div>
         <Badge variant="outline" color="violet" ml="md" visibleFrom="xs">
           AIRAC 04/2026
         </Badge>
