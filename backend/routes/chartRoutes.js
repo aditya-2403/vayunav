@@ -1,8 +1,22 @@
 const express = require('express');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
 const scraperService = require('../services/scraperService');
 const dbService = require('../services/dbService');
 const MESSAGES = require('../constants/messages');
+
+// Endpoint to verify PIN and issue JWT
+router.post('/verify-pin', async (req, res) => {
+    const { pin } = req.body;
+    if (!pin) return res.status(400).json({ error: 'Passcode is required' });
+
+    if (pin === process.env.APP_PIN) {
+        const token = jwt.sign({ pilot: true }, process.env.JWT_SECRET, { expiresIn: '24h' });
+        return res.json({ success: true, token });
+    } else {
+        return res.status(401).json({ error: 'Invalid Passcode' });
+    }
+});
 
 // Endpoint to scrape airports
 router.get('/airports', async (req, res) => {
